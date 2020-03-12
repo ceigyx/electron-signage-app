@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <button onclick="newWindow()">New Window</button>
+    <br>
+    <input id="windowId" type="number">
+    <button  onclick="closeWindow()">Close window</button>
+    <script>
+        const { ipcRenderer } = require("electron");
+
+        function newWindow () {
+            ipcRenderer.send("window", "new");
+        }
+
+        function closeWindow () {
+            let el = document.getElementById("windowId");
+            var windowId = parseInt(el.value, 10);
+            ipcRenderer.send("window", "close", windowId);
+        }
+
+    </script>
+  </body>
+</html>

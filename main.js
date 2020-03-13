@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
-
+const { httpsGet } = require("./fetch/megabusApi");
 
 var windows = [];
 
@@ -13,7 +13,7 @@ function createWindow () {
       nodeIntegration: true
     }
   });
-  win.loadFile("index.html");
+  win.loadFile("./ui/controlPanel.html");
   windows.push(win);
 //   console.log(windows);
 }
@@ -42,6 +42,25 @@ ipcMain.on("window", (event, ...arg) => {
         var index = arg[1];
         windows[index].close(() => {
         });
-        windows.splice(index, 1);
+        windows.splice(index, 1); 
     }
+});
+
+
+//fetch & update through megabusAPI
+app.on("ready", () => {
+  setInterval(() => {
+    var schedule;
+    new Promise((resolve, reject) => {
+      resolve(httpsGet("ca.megabus.com", "/journey-planner/api/schedule/280/145"));
+  
+    }).then((data) => {
+      schedule = data;
+      console.log("updated");
+      windows[0].webContents.send("update", "schedule", JSON.stringify(schedule)); 
+    }).catch(() => {
+      console.log("ERROR: Connection Error");
+    });
+  }, 10000);
+  
 });

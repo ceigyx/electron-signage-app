@@ -1,6 +1,7 @@
-/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
-const { megabusApi } = require("./fetch/megabusApi");
+const { megabusApi } = require("./modules/megabusApi");
+const { poll } = require("./modules/polling");
 
 var windows = [];
 
@@ -49,23 +50,15 @@ ipcMain.on("window", (event, ...arg) => {
 
 //fetch & update through megabusAPI
 app.on("ready", () => {
-  // setInterval(() => {
-  //   var schedule;
-  //   new Promise((resolve, reject) => {
-  //     resolve(httpsGet("ca.megabus.com", "/journey-planner/api/schedule/280/145"));
-  
-  //   }).then((data) => {
-  //     schedule = data;
-  //     console.log("updated");
-  //     windows[0].webContents.send("update", "schedule", JSON.stringify(schedule)); 
-  //   }).catch(() => {
-  //     console.log("ERROR: Connection Error");
-  //   });
-  // }, 10000);
-  megabusApi.journey('15948783').then((value) => {
-    console.log(value);
-  });
- 
 
 
+
+  poll(() => megabusApi.journey('15948783')
+  .then(console.log,
+    console.log
+  ), 1000);
+});
+
+process.on('uncaughtException', (err) => {
+  console.log("UNCAUGHT!!  "+err);
 });

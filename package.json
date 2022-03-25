@@ -18,6 +18,6 @@
   "homepage": "https://github.com/ceigyx/electron-signage-app#readme",
   "devDependencies": {
     "devtron": "^1.4.0",
-    "electron": "^8.1.0"
+    "electron": "^13.6.6"
   }
 }
